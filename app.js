@@ -4,6 +4,7 @@ require('./db');
 const app = express();
 const PORT = process.env.PORT;
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 app.use(cookieParser());
 
 const morgan = require('morgan');
@@ -11,6 +12,8 @@ const cors = require('cors');
 
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(fileUpload());
+
 app.use(
   cors({
     origin: [
@@ -28,6 +31,7 @@ const ordersRouter = require('./routers/orders');
 app.use(`/users`, usersRouter);
 app.use(`/products`, productsRouter);
 app.use(`/orders`, ordersRouter);
+app.use(`/files`, express.static(`routers/files`));
 
 // for development
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

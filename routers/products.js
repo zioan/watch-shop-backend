@@ -3,7 +3,21 @@ const router = express.Router();
 const db = require('../db');
 const auth = require('../middleware/auth');
 
-//create table is not already
+// images
+router.post('/upload', (req, res) => {
+  const newpath = __dirname + '/files/';
+  const file = req.files.image;
+  const filename = file.name;
+
+  file.mv(`${newpath}${filename}`, (err) => {
+    if (err) {
+      res.status(500).send({ message: 'File upload failed', code: 200 });
+    }
+    res.status(200).send({ message: 'File Uploaded', code: 200 });
+  });
+});
+
+//create product table is not already
 router.get('/createproductstable', (req, res) => {
   const sql =
     'CREATE TABLE products(id int AUTO_INCREMENT, name VARCHAR(255), image VARCHAR(255), description VARCHAR(255), price DECIMAL(15,2),  quantity int, timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))';

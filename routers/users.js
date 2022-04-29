@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 //create table is not already
 router.get('/createuserstable', (req, res) => {
   let sql =
-    'CREATE TABLE users(id int AUTO_INCREMENT, admin BOOLEAN not null default 0, name VARCHAR(255), surname VARCHAR(255), address VARCHAR(255), email VARCHAR(255), passwordHash VARCHAR(255), PRIMARY KEY (id))';
+    'CREATE TABLE users(id int AUTO_INCREMENT, admin BOOLEAN not null default false, name VARCHAR(255), surname VARCHAR(255), address VARCHAR(255), email VARCHAR(255), passwordHash VARCHAR(255), PRIMARY KEY (id))';
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -49,7 +49,7 @@ router.post('/register', (req, res) => {
         const token = jwt.sign(
           {
             id: result.insertId,
-            admin: req.body.admin,
+            admin: 0,
             name: newUserData.name,
             surname: newUserData.surname,
             address: newUserData.address,
@@ -77,7 +77,7 @@ router.post('/register', (req, res) => {
           .status(200)
           .send({
             id: result.insertId,
-            admin: req.body.admin,
+            admin: 0,
             name: newUserData.name,
             surname: newUserData.surname,
             address: newUserData.address,
@@ -103,7 +103,7 @@ router.post('/login', (req, res) => {
         const token = jwt.sign(
           {
             id: result[0].id,
-            admin: req.body.admin,
+            admin: result[0].admin,
             name: result[0].name,
             surname: result[0].surname,
             address: result[0].address,
@@ -129,7 +129,7 @@ router.post('/login', (req, res) => {
           .status(200)
           .send({
             id: result[0].id,
-            admin: req.body.admin,
+            admin: result[0].admin,
             name: result[0].name,
             surname: result[0].surname,
             address: result[0].address,
@@ -153,7 +153,6 @@ router.get('/loggedIn', (req, res) => {
     if (!token) return res.json(null);
 
     const validatedUser = jwt.verify(token, process.env.SECRET);
-    console.log(validatedUser);
     res.send(validatedUser);
   } catch (err) {
     return res.json(null);
