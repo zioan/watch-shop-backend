@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 
 // images
 router.post('/upload', (req, res) => {
-  const newpath = __dirname + '/files/';
+  const newpath = __dirname + '/files';
   const file = req.files.image;
   const filename = file.name;
 
