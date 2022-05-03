@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { resetWatchers } = require('nodemon/lib/monitor/watch');
 
 //create table is not already
 router.get('/createuserstable', (req, res) => {
@@ -136,6 +137,78 @@ router.post('/login', (req, res) => {
             email: result[0].email,
             token: token,
           });
+      } else {
+        res.status(400).send('Password is wrong');
+      }
+    } else {
+      return res.status(400).send('User not found');
+    }
+  });
+});
+
+// Update user profile
+router.put('/update/:id', (req, res) => {
+  const newData = {
+    name: req.body.name,
+    surname: req.body.surname,
+    address: req.body.address,
+  };
+
+  const sql = `UPDATE users SET name = '${newData.name}', surname = '${newData.surname}', address = '${newData.address}' WHERE id = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ message: err });
+    } else {
+      return res.json({ message: result });
+    }
+  });
+});
+
+// update user email
+router.put('/update/email/:id', (req, res) => {
+  const newData = {
+    email: req.body.email,
+  };
+
+  const sql = `UPDATE users SET email = '${newData.email}' WHERE id = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ message: err });
+    } else {
+      return res.json({ message: result });
+    }
+  });
+});
+
+// update user password
+router.put('/update/password/:id', (req, res) => {
+  const newData = {
+    email: req.body.email,
+    password: req.body.password,
+    passwordHash: bcrypt.hashSync(req.body.newPassword, 10),
+  };
+
+  // check user and current password
+  const findQuery = `SELECT * FROM users WHERE email = "${newData.email}"`;
+
+  const findUser = db.query(findQuery, (err, result) => {
+    if (err) {
+      return res.send('No user found for this email address!');
+    }
+
+    // if user
+    if (result.length > 0) {
+      // if old password is correct
+      if (bcrypt.compareSync(req.body.password, result[0].passwordHash)) {
+        // update password
+        const sql = `UPDATE users SET passwordHash = '${newData.passwordHash}' WHERE id = ${req.params.id}`;
+        db.query(sql, (err, result) => {
+          if (err) {
+            return res.json({ message: err });
+          } else {
+            return res.json({ message: result });
+          }
+        });
       } else {
         res.status(400).send('Password is wrong');
       }
