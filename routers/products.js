@@ -44,6 +44,18 @@ router.get('/all', (req, res) => {
   });
 });
 
+// get single product
+router.get('/:id', (req, res) => {
+  const sql = `SELECT * FROM products WHERE id = '${req.params.id}'`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ message: err });
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 //create new product
 router.post('/add', auth, (req, res) => {
   const newProduct = {
