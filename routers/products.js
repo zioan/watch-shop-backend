@@ -20,7 +20,7 @@ router.post('/upload', (req, res) => {
 //create product table is not already
 router.get('/createproductstable', (req, res) => {
   const sql =
-    'CREATE TABLE products(id int AUTO_INCREMENT, name VARCHAR(255), image VARCHAR(255), description VARCHAR(255), price DECIMAL(15,2),  quantity int, timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))';
+    'CREATE TABLE products(id int AUTO_INCREMENT, name VARCHAR(255), image VARCHAR(255), description VARCHAR(255), price DECIMAL(15,2),  quantity int, ordered_quantity int, subtotal DECIMAL(15,2), timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))';
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -64,6 +64,8 @@ router.post('/add', auth, (req, res) => {
     description: req.body.description,
     price: req.body.price,
     quantity: req.body.quantity,
+    ordered_quantity: 1,
+    subtotal: req.body.price,
   };
 
   const sql = 'INSERT INTO products set ?';
@@ -84,9 +86,11 @@ router.put('/update/:id', auth, (req, res) => {
     description: req.body.description,
     price: req.body.price,
     quantity: req.body.quantity,
+    ordered_quantity: 1,
+    subtotal: req.body.price,
   };
 
-  const sql = `UPDATE products SET name = '${newData.name}', image = '${newData.image}', description = '${newData.description}', price = '${newData.price}', quantity = ${newData.quantity} WHERE id = ${req.params.id}`;
+  const sql = `UPDATE products SET name = '${newData.name}', image = '${newData.image}', description = '${newData.description}', price = '${newData.price}', quantity = ${newData.quantity}, ordered_quantity = ${newData.ordered_quantity}, subtotal = ${newData.subtotal} WHERE id = ${req.params.id}`;
   db.query(sql, (err, result) => {
     if (err) {
       return res.json({ message: err });
