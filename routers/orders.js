@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 //create table is not already
 router.get('/createorderstable', (req, res) => {
   const sql =
-    'CREATE TABLE orders(id int AUTO_INCREMENT, user_id VARCHAR(255), product_id VARCHAR(255), status VARCHAR(255), quantity int, price DECIMAL(15,2), timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))';
+    'CREATE TABLE orders(id int AUTO_INCREMENT, user_id VARCHAR(255), status VARCHAR(255), order_data TEXT, total DECIMAL(15,2), timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))';
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -19,7 +19,7 @@ router.get('/createorderstable', (req, res) => {
 });
 
 // get all user orders
-router.get('/all/:user_id', auth, (req, res) => {
+router.get('/user/:user_id', auth, (req, res) => {
   const sql = `SELECT * FROM orders WHERE user_id = "${req.params.user_id}"`;
   db.query(sql, (err, result) => {
     if (err) {
@@ -58,14 +58,13 @@ router.get('/all/:status', auth, (req, res) => {
 router.post('/add', auth, (req, res) => {
   const newOrder = {
     user_id: req.body.user_id,
-    product_id: req.body.product_id,
     status: req.body.status,
-    quantity: req.body.quantity,
-    price: req.body.price,
+    order_data: req.body.order_data,
+    total: req.body.total,
   };
 
   const sql = 'INSERT INTO orders set ?';
-  const snippet = db.query(sql, newOrder, (err, result) => {
+  db.query(sql, newOrder, (err, result) => {
     if (err) {
       return res.json({ message: err });
     } else {
