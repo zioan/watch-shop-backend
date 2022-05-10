@@ -3,7 +3,8 @@ const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { resetWatchers } = require('nodemon/lib/monitor/watch');
+// const { resetWatchers } = require('nodemon/lib/monitor/watch');
+const auth = require('../middleware/auth');
 
 //create table is not already
 router.get('/createuserstable', (req, res) => {
@@ -16,6 +17,18 @@ router.get('/createuserstable', (req, res) => {
     } else {
       console.log(result);
       res.send('Users table created');
+    }
+  });
+});
+
+//get customer (user) details
+router.get('/find/:id', auth, (req, res) => {
+  const sql = `SELECT * FROM users WHERE id = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ message: err });
+    } else {
+      res.send(result);
     }
   });
 });
