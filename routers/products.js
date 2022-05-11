@@ -100,6 +100,22 @@ router.put('/update/:id', auth, (req, res) => {
   });
 });
 
+//update product quantity
+router.put('/quantity/:id', auth, (req, res) => {
+  const newData = {
+    quantity: req.body.quantity,
+  };
+
+  const sql = `UPDATE products SET quantity = ${req.body.quantity} WHERE id = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ message: err });
+    } else {
+      return res.json({ message: result });
+    }
+  });
+});
+
 //delete product
 router.delete('/delete/:id', auth, (req, res) => {
   const sql = `DELETE from products WHERE id = ${req.params.id}`;
