@@ -20,7 +20,7 @@ router.get('/createimagestable', (req, res) => {
 });
 
 //get all images (names) from DB
-router.get('/all', auth, (req, res) => {
+router.get('/all', (req, res) => {
   const sql = `SELECT * FROM images`;
   db.query(sql, (err, result) => {
     if (err) {
