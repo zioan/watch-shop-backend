@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// const { resetWatchers } = require('nodemon/lib/monitor/watch');
 const auth = require('../middleware/auth');
 
 //create table is not already
@@ -22,7 +21,7 @@ router.get('/createuserstable', (req, res) => {
 });
 
 //get customer (user) details
-router.get('/find/:id', auth, (req, res) => {
+router.get('/find/:id', (req, res) => {
   const sql = `SELECT * FROM users WHERE id = ${req.params.id}`;
   db.query(sql, (err, result) => {
     if (err) {
@@ -109,7 +108,6 @@ router.post('/login', (req, res) => {
 
   const findUser = db.query(findQuery, (err, result) => {
     if (err) {
-      // return res.json({ message: 'No user found for this email address!' });
       return res.send('No user found for this email address!');
     }
     if (result.length > 0) {
