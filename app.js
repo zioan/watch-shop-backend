@@ -20,10 +20,7 @@ app.use(fileUpload());
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'https://snippet-manager-test.netlify.app',
-    ],
+    origin: ['http://localhost:3000', 'https://shop.zioan.com'],
     credentials: true,
   })
 );
@@ -40,7 +37,7 @@ app.use(`/images`, imagesRouter);
 app.use(`/files`, express.static(`routers/files`));
 
 // for development
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
 // for production
-// app.listen(() => console.log(`Server running`));
+app.listen(() => console.log(`Server running`));
